@@ -27,6 +27,7 @@ const tools = [
     id: "review",
     icon: MessageSquareText,
     title: "Review Reply Generator",
+    shortLabel: "Review",
     desc: "Create polished replies to positive, negative, and neutral reviews in seconds.",
     placeholder: "Paste the customer review you received here...",
   },
@@ -34,6 +35,7 @@ const tools = [
     id: "promo",
     icon: Megaphone,
     title: "Promo Campaign Generator",
+    shortLabel: "Promo",
     desc: "Turn one offer into a flyer headline, email, SMS, Facebook post, and Google Business update.",
     placeholder: "Describe your offer, discount, service, city, and deadline...",
   },
@@ -41,6 +43,7 @@ const tools = [
     id: "caption",
     icon: ImagePlus,
     title: "Social Caption Generator",
+    shortLabel: "Caption",
     desc: "Turn photos, projects, and before/after work into ready-to-post captions and hashtags.",
     placeholder: "Describe the photo, project, result, or before/after transformation...",
   },
@@ -48,6 +51,7 @@ const tools = [
     id: "ideas",
     icon: CalendarDays,
     title: "Monthly Marketing Calendar",
+    shortLabel: "Calendar",
     desc: "Create a simple 30-day plan with posts, promos, review prompts, and local trust content.",
     placeholder: "Describe this month's goals, seasonal services, slow days, offers, events, or holidays...",
   },
@@ -65,14 +69,14 @@ const pricing = [
     name: "Starter",
     price: "$19",
     sub: "per month",
-    features: ["100 generations per month", "All 4 copy tools", "Multiple tones", "Copy-ready outputs", "Monthly calendars"],
+    features: ["100 generations per month", "All 4 copy tools", "Browser brand memory", "Copy-ready outputs", "Monthly calendars"],
     cta: "Start Starter",
   },
   {
     name: "Pro",
     price: "$49",
     sub: "per month",
-    features: ["Unlimited generations", "Promo bundles", "Review recovery responses", "Monthly calendars", "Priority feature updates"],
+    features: ["Unlimited generations", "Promo bundles", "Review recovery responses", "Brand memory", "Monthly calendars"],
     cta: "Start Pro",
     highlight: true,
   },
@@ -103,7 +107,11 @@ const faqs = [
   },
   {
     q: "Can it match my brand voice?",
-    a: "You can guide the voice with tone, business type, city, and the details you enter. Saved brand profiles are planned for a future account-based version.",
+    a: "Yes. You can save a simple brand profile on your device with your business type, location, tone, main services, and wording to avoid.",
+  },
+  {
+    q: "Is brand memory saved to an account?",
+    a: "Not yet. The current version saves brand memory in your browser on the device you use. Cloud accounts and team profiles can come later.",
   },
 ];
 
@@ -404,7 +412,7 @@ function App() {
                         type="button"
                       >
                         <Icon size={18} />
-                        <span>{tool.title.replace(" Generator", "")}</span>
+                        <span>{tool.shortLabel}</span>
                       </button>
                     );
                   })}
@@ -559,7 +567,7 @@ function App() {
                 <span>{index + 1}</span>
                 <h2>{step}</h2>
                 <p>
-                  {index === 0 && "Add your business name, service area, industry, and tone."}
+                  {index === 0 && "Add or save your business name, service area, services, and tone."}
                   {index === 1 && "Pick review replies, promos, social captions, or a monthly calendar."}
                   {index === 2 && "Use the output in email, texts, social posts, Google Business, or your monthly plan."}
                 </p>
