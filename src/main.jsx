@@ -28,7 +28,7 @@ const tools = [
     icon: MessageSquareText,
     title: "Review Reply Generator",
     desc: "Create polished replies to positive, negative, and neutral reviews in seconds.",
-    placeholder: "Paste a customer review here...",
+    placeholder: "Paste the customer review you received here...",
   },
   {
     id: "promo",
@@ -196,6 +196,14 @@ function buildGeneration({ activeTool, businessName, businessType, city, tone, p
   return `Flyer headline:\n${cleanPrompt}\n\nFacebook post:\n${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. Book this week to claim it before appointments fill up.\n\nSMS:\n${business}: ${cleanPrompt}. Reply YES to book or message us today.\n\nEmail subject:\nA quick offer from ${business}\n\nGoogle Business update:\nLooking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer. Message us today to schedule.`;
 }
 
+function getDefaultPrompt(toolId) {
+  if (toolId === "promo") {
+    return "20% off spring AC tune-ups this week for homeowners in Austin.";
+  }
+
+  return "";
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTool, setActiveTool] = useState("promo");
@@ -204,7 +212,7 @@ function App() {
   const [city, setCity] = useState("Austin");
   const [tone, setTone] = useState("Friendly");
   const [reviewSituation, setReviewSituation] = useState("Positive review");
-  const [prompt, setPrompt] = useState("20% off spring AC tune-ups this week for homeowners in Austin.");
+  const [prompt, setPrompt] = useState(getDefaultPrompt("promo"));
   const [generationCount, setGenerationCount] = useState(getSavedUsage);
   const [generatedOutput, setGeneratedOutput] = useState("");
   const [copied, setCopied] = useState(false);
@@ -234,6 +242,13 @@ function App() {
     window.localStorage.setItem(usageStorageKey, String(nextCount));
     setGenerationCount(nextCount);
     setGeneratedOutput(nextOutput);
+  }
+
+  function selectTool(toolId) {
+    setActiveTool(toolId);
+    setPrompt(getDefaultPrompt(toolId));
+    setGeneratedOutput("");
+    setCopied(false);
   }
 
   async function copyOutput() {
@@ -346,7 +361,7 @@ function App() {
                       <button
                         key={tool.id}
                         className={activeTool === tool.id ? "tool-tab active" : "tool-tab"}
-                        onClick={() => setActiveTool(tool.id)}
+                        onClick={() => selectTool(tool.id)}
                         type="button"
                       >
                         <Icon size={18} />
