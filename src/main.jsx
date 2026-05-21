@@ -47,9 +47,9 @@ const tools = [
   {
     id: "ideas",
     icon: CalendarDays,
-    title: "Monthly Content Ideas",
-    desc: "Create a simple month of post ideas, promo angles, and reputation prompts.",
-    placeholder: "Describe your goals this month, seasonal services, slow days, or offers...",
+    title: "Monthly Marketing Calendar",
+    desc: "Create a simple 30-day plan with posts, promos, review prompts, and local trust content.",
+    placeholder: "Describe this month's goals, seasonal services, slow days, offers, events, or holidays...",
   },
 ];
 
@@ -58,7 +58,7 @@ const pricing = [
     name: "Free",
     price: "$0",
     sub: "Try it out",
-    features: ["5 generations per month", "Review replies", "Promo copy", "Social captions", "Content ideas"],
+    features: ["5 generations per month", "Review replies", "Promo copy", "Social captions", "Monthly calendar"],
     cta: "Start free",
   },
   {
@@ -123,7 +123,7 @@ const presetLabels = [
   "Grand opening",
   "Seasonal tune-up",
   "Referral push",
-  "Monthly ideas",
+  "Monthly calendar",
   "Angry review reply",
 ];
 
@@ -149,7 +149,7 @@ const outcomeExamples = [
 ];
 
 const upgradeReasons = [
-  "Create enough posts, promos, and replies for the whole month",
+  "Create a simple 30-day marketing calendar for the whole month",
   "Keep your business voice, services, city, and audience consistent",
   "Turn one offer into multiple channels without rewriting it yourself",
   "Save common replies and promos instead of starting over every time",
@@ -190,7 +190,7 @@ function buildGeneration({ activeTool, businessName, businessType, city, tone, p
   }
 
   if (activeTool === "ideas") {
-    return `10 post ideas for this month:\n1. Customer question: What should ${market} customers know before booking a ${category}?\n2. Behind the scenes: Show the team getting ready for the day.\n3. Before/after: Highlight a recent result or finished project.\n4. Seasonal tip: Share one thing customers should handle this month.\n5. Offer post: ${cleanPrompt}\n6. Review spotlight: Thank a recent happy customer.\n7. Local trust post: Mention the neighborhoods or service areas you help.\n8. Common mistake: Explain one problem customers can avoid.\n9. Team post: Introduce the person customers may meet first.\n10. Last-chance reminder: Repeat the monthly offer near the end of the month.\n\n5 promo angles:\n- Limited appointment availability\n- Seasonal maintenance reminder\n- First-time customer offer\n- Bundle a popular service with a small bonus\n- Referral thank-you offer\n\n5 review prompts:\n- What did our team make easier for you?\n- What stood out about your experience?\n- Would you recommend ${business} to a neighbor?\n- What problem did we help solve?\n- What should other ${market} customers know before calling us?`;
+    return `30-day marketing calendar for ${business}\nGoal or theme:\n${cleanPrompt}\n\nRecommended cadence:\n- 2 Facebook or Instagram posts per week\n- 1 Google Business update per week\n- 1 review/reputation prompt per week\n- 1 offer reminder near the middle and end of the month\n\nWeek 1: Build trust\nDay 1 - Google Business: Introduce the main service or offer for the month.\nDay 3 - Social post: Share a common customer question about your ${category}.\nDay 5 - Review prompt: Ask recent customers what stood out about their experience.\nDay 7 - Local trust post: Mention the ${market} neighborhoods or customer types you help most.\n\nWeek 2: Educate and show proof\nDay 9 - Tip post: Share one seasonal or timely tip customers should know.\nDay 11 - Before/after or project post: Show a result, finished job, happy customer, or team moment.\nDay 13 - Google Business: Explain what makes your process simple or reliable.\nDay 14 - Soft offer: Remind customers about this month's offer or best service.\n\nWeek 3: Drive action\nDay 16 - Promo post: Turn the monthly theme into a clear limited-time offer.\nDay 18 - SMS or email: Send a short reminder to book, visit, or message the business.\nDay 20 - Review spotlight: Thank a recent customer and highlight one positive detail.\nDay 21 - FAQ post: Answer the question customers ask before buying.\n\nWeek 4: Finish strong\nDay 23 - Social post: Share a behind-the-scenes or team photo.\nDay 25 - Google Business: Post a last-call reminder for the monthly offer.\nDay 27 - Reputation prompt: Ask customers to mention what problem you helped solve.\nDay 30 - Recap post: Thank ${market} customers and preview what is coming next month.\n\n5 ready-to-use post hooks:\n- ${market} customers ask us this all the time...\n- Before you book a ${category}, here is one thing to know.\n- A quick reminder from ${business}: ${cleanPrompt}\n- We helped another local customer with this exact problem.\n- If this has been on your to-do list, this is your sign to handle it this week.\n\nBest channels this month:\n- Google Business for local search visibility\n- Facebook for community awareness\n- SMS or email for offer reminders\n- Instagram for photos, before/after work, and team trust`;
   }
 
   return `Flyer headline:\n${cleanPrompt}\n\nFacebook post:\n${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. Book this week to claim it before appointments fill up.\n\nSMS:\n${business}: ${cleanPrompt}. Reply YES to book or message us today.\n\nEmail subject:\nA quick offer from ${business}\n\nGoogle Business update:\nLooking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer. Message us today to schedule.`;
@@ -526,7 +526,7 @@ function App() {
           <div className="value-grid">
             <div>
               <h2>Why businesses keep paying for it</h2>
-              <p>The free tool proves the value. Paid plans are for owners who want a steady flow of review replies, promos, captions, and monthly content ideas without writing from scratch.</p>
+              <p>The free tool proves the value. Paid plans are for owners who want a steady flow of review replies, promos, captions, and monthly marketing calendars without writing from scratch.</p>
             </div>
             <div className="reason-grid">
               {[
@@ -597,8 +597,8 @@ function App() {
         <section className="cta-section">
           <div className="cta-inner">
             <div>
-              <h2>Give your business a month of marketing ideas in minutes.</h2>
-              <p>Start free, create your first review reply or promo, and see how quickly your business can produce better everyday marketing copy.</p>
+              <h2>Give your business a month of marketing direction in minutes.</h2>
+              <p>Start free, create your first review reply, promo, or monthly calendar, and see how quickly your business can produce better everyday marketing copy.</p>
             </div>
             <div className="cta-buttons">
               <Button variant="light" onClick={() => startPlan("Free")}>Create free copy</Button>
