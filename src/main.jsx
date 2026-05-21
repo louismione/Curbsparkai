@@ -116,6 +116,34 @@ const presetLabels = [
   "Referral push",
 ];
 
+const outcomeExamples = [
+  {
+    label: "Rough idea",
+    title: "AC tune-up promo",
+    before: "20% off tune-ups this week",
+    after: "Spring heat is coming. Book your AC tune-up this week and save 20%. Limited appointments available for Austin homeowners.",
+  },
+  {
+    label: "Customer review",
+    title: "Professional reply",
+    before: "They fixed it fast but arrived late.",
+    after: "Thank you for trusting our team. We are glad the repair was handled quickly, and we appreciate your patience with the arrival time.",
+  },
+  {
+    label: "Photo caption",
+    title: "Before/after post",
+    before: "Kitchen backsplash finished",
+    after: "Fresh tile, cleaner lines, and a brighter kitchen. Another finished project ready for the weekend.",
+  },
+];
+
+const upgradeReasons = [
+  "Create enough posts, promos, and replies for the whole month",
+  "Keep your business voice, services, city, and audience consistent",
+  "Turn one offer into multiple channels without rewriting it yourself",
+  "Save common replies and promos instead of starting over every time",
+];
+
 function Button({ children, variant = "primary", className = "", ...props }) {
   return (
     <button className={`button button-${variant} ${className}`} {...props}>
@@ -143,14 +171,14 @@ function buildGeneration({ activeTool, businessName, businessType, city, tone, p
   const market = city.trim() || "your area";
 
   if (activeTool === "review") {
-    return `Hi, thank you for sharing this feedback with ${business}. We appreciate the chance to serve customers in ${market}, and we are glad you took the time to let us know about your experience. We will share this with our team and use it to keep improving.`;
+    return `Public reply:\nHi, thank you for sharing this feedback with ${business}. We appreciate the chance to serve customers in ${market}, and we are glad you took the time to let us know about your experience. We will share this with our team and use it to keep improving.\n\nPrivate follow-up:\nThanks again for the feedback. If there is anything else we can do to make this right, please message us and our team will take care of it.`;
   }
 
   if (activeTool === "caption") {
-    return `Another finished project from ${business}. We love helping ${market} customers get results they can feel good about.\n\n${cleanPrompt}\n\nReady for help from a ${tone.toLowerCase()} ${category}? Send us a message today.\n\n#LocalBusiness #${market.replace(/\s+/g, "")} #SmallBusiness #CustomerCare`;
+    return `Caption:\nAnother finished project from ${business}. We love helping ${market} customers get results they can feel good about.\n\n${cleanPrompt}\n\nCTA:\nReady for help from a ${tone.toLowerCase()} ${category}? Send us a message today.\n\nHashtags:\n#LocalBusiness #${market.replace(/\s+/g, "")} #SmallBusiness #CustomerCare`;
   }
 
-    return `Headline: ${cleanPrompt}\n\nPost: ${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. Book this week to claim it before appointments fill up.\n\nSMS: ${business}: ${cleanPrompt}. Reply YES to book or message us today.\n\nGoogle Business Update: Looking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer. Message us today to schedule.`;
+  return `Flyer headline:\n${cleanPrompt}\n\nFacebook post:\n${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. Book this week to claim it before appointments fill up.\n\nSMS:\n${business}: ${cleanPrompt}. Reply YES to book or message us today.\n\nEmail subject:\nA quick offer from ${business}\n\nGoogle Business update:\nLooking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer. Message us today to schedule.`;
 }
 
 function App() {
@@ -264,7 +292,7 @@ function App() {
               </div>
               <h1>CurbSpark AI</h1>
               <p className="hero-copy">
-                Create review replies, promotions, captions, and everyday marketing copy in seconds. Built for busy local business owners who need useful content without complicated software.
+                Turn one rough idea, review, or photo note into ready-to-post marketing copy for Facebook, Google Business, email, and SMS. Built for busy local business owners who need useful content without complicated software.
               </p>
               <div className="hero-actions">
                 <Button onClick={() => document.querySelector("#generator").scrollIntoView({ behavior: "smooth" })}>
@@ -380,6 +408,33 @@ function App() {
           </div>
         </section>
 
+        <section className="proof-section">
+          <div className="proof-wrap">
+            <div className="section-heading">
+              <h2>From rough idea to usable marketing in one click</h2>
+              <p>Owners do not need a blank document. They need a fast first draft they can copy, edit, and post.</p>
+            </div>
+            <div className="example-grid">
+              {outcomeExamples.map((example) => (
+                <Card className="example-card" key={example.title}>
+                  <div className="example-label">{example.label}</div>
+                  <h3>{example.title}</h3>
+                  <div className="before-after">
+                    <div>
+                      <span>Before</span>
+                      <p>{example.before}</p>
+                    </div>
+                    <div>
+                      <span>After</span>
+                      <p>{example.after}</p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section id="how" className="how-section">
           <div className="how-grid">
             {["Enter your business info", "Choose a tool", "Copy your content"].map((step, index) => (
@@ -423,8 +478,8 @@ function App() {
         <section className="value-section">
           <div className="value-grid">
             <div>
-              <h2>Why businesses buy it</h2>
-              <p>The value is immediate. They enter a review, offer, or photo description and get something they can use right away.</p>
+              <h2>Why businesses keep paying for it</h2>
+              <p>The free tool proves the value. Paid plans are for owners who want a steady flow of review replies, promos, captions, and monthly content ideas without writing from scratch.</p>
             </div>
             <div className="reason-grid">
               {[
@@ -437,6 +492,23 @@ function App() {
                   <Icon />
                   <h3>{title}</h3>
                   <p>{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="upgrade-section">
+          <div className="upgrade-wrap">
+            <div>
+              <div className="eyebrow dark">Why upgrade</div>
+              <h2>The paid version is not more complicated. It just removes the monthly content bottleneck.</h2>
+            </div>
+            <div className="upgrade-list">
+              {upgradeReasons.map((reason) => (
+                <div key={reason}>
+                  <CheckCircle2 size={19} />
+                  <span>{reason}</span>
                 </div>
               ))}
             </div>

@@ -1,0 +1,19 @@
+<svg width="1200" height="320" viewBox="0 0 1200 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="320" rx="36" fill="#ffffff"/>
+  <g transform="translate(70 70)">
+    <rect width="180" height="180" rx="38" fill="url(#markGradient)"/>
+    <path d="M92 38L106 76L144 90L106 104L92 142L78 104L40 90L78 76L92 38Z" fill="white"/>
+    <path d="M142 34L148 51L166 58L148 65L142 82L135 65L118 58L135 51L142 34Z" fill="white" opacity="0.9"/>
+    <path d="M50 130L55 143L68 148L55 153L50 166L45 153L32 148L45 143L50 130Z" fill="white" opacity="0.9"/>
+  </g>
+  <text x="290" y="151" fill="#141414" font-family="Inter, Arial, Helvetica, sans-serif" font-size="88" font-weight="850" letter-spacing="0">CurbSpark</text>
+  <text x="292" y="218" fill="#ff6848" font-family="Inter, Arial, Helvetica, sans-serif" font-size="58" font-weight="850" letter-spacing="2">AI</text>
+  <defs>
+    <linearGradient id="markGradient" x1="0" y1="0" x2="180" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#141414"/>
+      <stop offset="0.48" stop-color="#222222"/>
+      <stop offset="0.62" stop-color="#ff6848"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+</svg>
