@@ -221,6 +221,52 @@ function buildGeneration({ activeTool, businessName, businessType, city, tone, m
   return `Flyer headline:\n${cleanPrompt}\n\nFacebook post:\n${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. Book this week to claim it before appointments fill up.\n\nSMS:\n${business}: ${cleanPrompt}. Reply YES to book or message us today.\n\nEmail subject:\nA quick offer from ${business}\n\nGoogle Business update:\nLooking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer. Message us today to schedule.\n\nBrand notes:${serviceLine || "\nEmphasize the services customers ask about most."}${avoidLine}`;
 }
 
+function buildPromoChannels({ businessName, businessType, city, tone, mainServices, avoidWords, prompt }) {
+  const cleanPrompt = prompt.trim() || "20% off spring AC tune-ups this week";
+  const business = businessName.trim() || "your business";
+  const category = businessType.trim() || "local business";
+  const market = city.trim() || "your area";
+  const services = mainServices.trim();
+  const avoid = avoidWords.trim();
+  const serviceNote = services ? ` Focus: ${services}.` : "";
+  const avoidNote = avoid ? ` Avoid: ${avoid}.` : "";
+
+  return [
+    {
+      label: "Flyer Headline",
+      text: cleanPrompt,
+    },
+    {
+      label: "Facebook Post",
+      text: `${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. ${cleanPrompt}. Book this week before appointments fill up.${serviceNote}${avoidNote}`,
+    },
+    {
+      label: "Instagram Post",
+      text: `${cleanPrompt}\n\nNeed help from a ${tone.toLowerCase()} ${category} in ${market}? ${business} is ready when you are.\n\n#LocalBusiness #${market.replace(/\s+/g, "")} #SmallBusiness #CustomerCare`,
+    },
+    {
+      label: "Google Business Update",
+      text: `Looking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer: ${cleanPrompt}. Message us today to schedule.${serviceNote}`,
+    },
+    {
+      label: "SMS",
+      text: `${business}: ${cleanPrompt}. Reply YES to book or message us today.`,
+    },
+    {
+      label: "Email Subject",
+      text: `A quick offer from ${business}`,
+    },
+    {
+      label: "Short Email",
+      text: `Hi there,\n\n${business} is offering ${cleanPrompt}. If this has been on your to-do list, this is a good week to get it handled.\n\nMessage us today to schedule.\n\n- ${business}`,
+    },
+  ];
+}
+
+function stringifyChannelOutput(channels) {
+  return channels.map((channel) => `${channel.label}:\n${channel.text}`).join("\n\n");
+}
+
 function getDefaultPrompt(toolId) {
   if (toolId === "promo") {
     return "20% off spring AC tune-ups this week for homeowners in Austin.";
@@ -244,6 +290,7 @@ function App() {
   const [prompt, setPrompt] = useState(getDefaultPrompt("promo"));
   const [generationCount, setGenerationCount] = useState(getSavedUsage);
   const [generatedOutput, setGeneratedOutput] = useState("");
+  const [channelOutput, setChannelOutput] = useState([]);
   const [copied, setCopied] = useState(false);
 
   const activeToolData = tools.find((tool) => tool.id === activeTool);
@@ -267,9 +314,17 @@ function App() {
     const nextCount = generationCount + 1;
     const promptWithContext =
       activeTool === "review" ? `${reviewSituation}: ${prompt}` : prompt;
-    const nextOutput = buildGeneration({ activeTool, businessName, businessType, city, tone, mainServices, avoidWords, prompt: promptWithContext });
+    const nextChannels =
+      activeTool === "promo"
+        ? buildPromoChannels({ businessName, businessType, city, tone, mainServices, avoidWords, prompt })
+        : [];
+    const nextOutput =
+      activeTool === "promo"
+        ? stringifyChannelOutput(nextChannels)
+        : buildGeneration({ activeTool, businessName, businessType, city, tone, mainServices, avoidWords, prompt: promptWithContext });
     window.localStorage.setItem(usageStorageKey, String(nextCount));
     setGenerationCount(nextCount);
+    setChannelOutput(nextChannels);
     setGeneratedOutput(nextOutput);
   }
 
@@ -295,6 +350,7 @@ function App() {
     setActiveTool(toolId);
     setPrompt(getDefaultPrompt(toolId));
     setGeneratedOutput("");
+    setChannelOutput([]);
     setCopied(false);
   }
 
@@ -306,6 +362,10 @@ function App() {
     await navigator.clipboard.writeText(generatedOutput);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
+  }
+
+  async function copyChannel(text) {
+    await navigator.clipboard.writeText(text);
   }
 
   function startPlan(plan = "Free") {
@@ -513,12 +573,28 @@ function App() {
 
                 <div className="output-panel" aria-live="polite">
                   <div className="output-head">
-                    <span><Wand2 size={17} /> Generated copy</span>
+                    <span><Wand2 size={17} /> {channelOutput.length ? "Copy by channel" : "Generated copy"}</span>
                     <button className="copy-button" onClick={copyOutput} type="button" disabled={!generatedOutput}>
-                      <Copy size={16} /> {copied ? "Copied" : "Copy"}
+                      <Copy size={16} /> {copied ? "Copied" : channelOutput.length ? "Copy all" : "Copy"}
                     </button>
                   </div>
-                  <pre>{generatedOutput || "Your generated copy will appear here after you click Generate copy."}</pre>
+                  {channelOutput.length > 0 ? (
+                    <div className="channel-grid">
+                      {channelOutput.map((channel) => (
+                        <div className="channel-card" key={channel.label}>
+                          <div className="channel-card-head">
+                            <h3>{channel.label}</h3>
+                            <button onClick={() => copyChannel(channel.text)} type="button">
+                              <Copy size={14} /> Copy
+                            </button>
+                          </div>
+                          <p>{channel.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <pre>{generatedOutput || "Your generated copy will appear here after you click Generate copy."}</pre>
+                  )}
                 </div>
               </Card>
             </motion.div>
