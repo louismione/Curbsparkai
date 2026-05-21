@@ -65,14 +65,14 @@ const pricing = [
     name: "Starter",
     price: "$19",
     sub: "per month",
-    features: ["100 generations per month", "Saved business profile", "Multiple tones", "Copy and paste outputs"],
+    features: ["100 generations per month", "All 4 copy tools", "Multiple tones", "Copy-ready outputs", "Monthly calendars"],
     cta: "Start Starter",
   },
   {
     name: "Pro",
     price: "$49",
     sub: "per month",
-    features: ["Unlimited generations", "Saved brand voice", "Promo bundles", "Review recovery responses", "Priority templates"],
+    features: ["Unlimited generations", "Promo bundles", "Review recovery responses", "Monthly calendars", "Priority feature updates"],
     cta: "Start Pro",
     highlight: true,
   },
@@ -80,7 +80,7 @@ const pricing = [
     name: "Business",
     price: "$99",
     sub: "per month",
-    features: ["Multiple locations", "Team access", "Campaign history", "Custom templates", "Monthly content ideas"],
+    features: ["Unlimited generations", "Multiple business locations", "Team-ready usage", "Campaign bundles", "Monthly marketing calendars"],
     cta: "Start Business",
   },
 ];
@@ -103,7 +103,7 @@ const faqs = [
   },
   {
     q: "Can it match my brand voice?",
-    a: "Yes. The app includes business profile and tone fields now, and the production backend can save those per account.",
+    a: "You can guide the voice with tone, business type, city, and the details you enter. Saved brand profiles are planned for a future account-based version.",
   },
 ];
 
@@ -336,7 +336,7 @@ function App() {
                 </Button>
               </div>
               <div className="mini-metrics" aria-label="Product highlights">
-                <span><strong>3</strong> launch tools</span>
+                <span><strong>4</strong> focused tools</span>
                 <span><strong>30 sec</strong> to usable copy</span>
                 <span><strong>0</strong> setup hassle</span>
               </div>
@@ -490,8 +490,8 @@ function App() {
                 <h2>{step}</h2>
                 <p>
                   {index === 0 && "Add your business name, service area, industry, and tone."}
-                  {index === 1 && "Pick review replies, promotions, or social captions."}
-                  {index === 2 && "Use the output in email, texts, social posts, or Google Business."}
+                  {index === 1 && "Pick review replies, promos, social captions, or a monthly calendar."}
+                  {index === 2 && "Use the output in email, texts, social posts, Google Business, or your monthly plan."}
                 </p>
               </div>
             ))}
@@ -500,8 +500,8 @@ function App() {
 
         <section id="tools" className="content-section">
           <div className="section-heading">
-            <h2>Everything a busy local business needs to create simple marketing content</h2>
-            <p>Start with three high-value tools. Add more later only after customers ask for them.</p>
+            <h2>Four focused tools for everyday local marketing</h2>
+            <p>Create review replies, promo bundles, social captions, and monthly marketing calendars without starting from a blank page.</p>
           </div>
           <div className="industry-list" aria-label="Example industries">
             {industries.map((industry) => (
