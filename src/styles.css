@@ -323,7 +323,7 @@ label span,
 
 .tool-tabs {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 16px;
 }
@@ -381,6 +381,30 @@ select:focus {
 
 .prompt-label {
   margin-top: 12px;
+}
+
+.segment-control {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.segment-control button {
+  min-height: 34px;
+  border: 1px solid rgba(20, 20, 20, 0.12);
+  border-radius: 999px;
+  background: #f0ede6;
+  color: #4b473f;
+  padding: 0 11px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.segment-control button.active {
+  border-color: #141414;
+  background: #141414;
+  color: white;
 }
 
 textarea {

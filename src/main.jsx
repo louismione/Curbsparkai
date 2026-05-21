@@ -8,6 +8,7 @@ import {
   MessageSquareText,
   Megaphone,
   ImagePlus,
+  CalendarDays,
   Sparkles,
   Clock,
   ShieldCheck,
@@ -43,6 +44,13 @@ const tools = [
     desc: "Turn photos, projects, and before/after work into ready-to-post captions and hashtags.",
     placeholder: "Describe the photo, project, result, or before/after transformation...",
   },
+  {
+    id: "ideas",
+    icon: CalendarDays,
+    title: "Monthly Content Ideas",
+    desc: "Create a simple month of post ideas, promo angles, and reputation prompts.",
+    placeholder: "Describe your goals this month, seasonal services, slow days, or offers...",
+  },
 ];
 
 const pricing = [
@@ -50,7 +58,7 @@ const pricing = [
     name: "Free",
     price: "$0",
     sub: "Try it out",
-    features: ["5 generations per month", "Review replies", "Promo copy", "Social captions"],
+    features: ["5 generations per month", "Review replies", "Promo copy", "Social captions", "Content ideas"],
     cta: "Start free",
   },
   {
@@ -103,6 +111,7 @@ const toneOptions = ["Friendly", "Professional", "Warm", "Confident"];
 const industries = ["HVAC", "Dental", "Salon", "Med spa", "Roofing", "Restaurant", "Auto repair", "Fitness"];
 const FREE_GENERATION_LIMIT = 5;
 const usageStorageKey = `curbspark-free-generations-${new Date().toISOString().slice(0, 7)}`;
+const reviewSituations = ["Positive review", "Negative review", "Neutral review", "Angry customer", "Late service complaint"];
 const presetLabels = [
   "5-star reply",
   "Missed call text",
@@ -114,6 +123,8 @@ const presetLabels = [
   "Grand opening",
   "Seasonal tune-up",
   "Referral push",
+  "Monthly ideas",
+  "Angry review reply",
 ];
 
 const outcomeExamples = [
@@ -171,11 +182,15 @@ function buildGeneration({ activeTool, businessName, businessType, city, tone, p
   const market = city.trim() || "your area";
 
   if (activeTool === "review") {
-    return `Public reply:\nHi, thank you for sharing this feedback with ${business}. We appreciate the chance to serve customers in ${market}, and we are glad you took the time to let us know about your experience. We will share this with our team and use it to keep improving.\n\nPrivate follow-up:\nThanks again for the feedback. If there is anything else we can do to make this right, please message us and our team will take care of it.`;
+    return `Public reply:\nHi, thank you for sharing this feedback with ${business}. We appreciate the chance to serve customers in ${market}, and we are glad you took the time to let us know about your experience. We will share this with our team and use it to keep improving.\n\nPrivate follow-up:\nThanks again for the feedback. If there is anything else we can do to make this right, please message us and our team will take care of it.\n\nInternal note:\nUse this as a calm, ${tone.toLowerCase()} response that acknowledges the customer without sounding defensive.`;
   }
 
   if (activeTool === "caption") {
     return `Caption:\nAnother finished project from ${business}. We love helping ${market} customers get results they can feel good about.\n\n${cleanPrompt}\n\nCTA:\nReady for help from a ${tone.toLowerCase()} ${category}? Send us a message today.\n\nHashtags:\n#LocalBusiness #${market.replace(/\s+/g, "")} #SmallBusiness #CustomerCare`;
+  }
+
+  if (activeTool === "ideas") {
+    return `10 post ideas for this month:\n1. Customer question: What should ${market} customers know before booking a ${category}?\n2. Behind the scenes: Show the team getting ready for the day.\n3. Before/after: Highlight a recent result or finished project.\n4. Seasonal tip: Share one thing customers should handle this month.\n5. Offer post: ${cleanPrompt}\n6. Review spotlight: Thank a recent happy customer.\n7. Local trust post: Mention the neighborhoods or service areas you help.\n8. Common mistake: Explain one problem customers can avoid.\n9. Team post: Introduce the person customers may meet first.\n10. Last-chance reminder: Repeat the monthly offer near the end of the month.\n\n5 promo angles:\n- Limited appointment availability\n- Seasonal maintenance reminder\n- First-time customer offer\n- Bundle a popular service with a small bonus\n- Referral thank-you offer\n\n5 review prompts:\n- What did our team make easier for you?\n- What stood out about your experience?\n- Would you recommend ${business} to a neighbor?\n- What problem did we help solve?\n- What should other ${market} customers know before calling us?`;
   }
 
   return `Flyer headline:\n${cleanPrompt}\n\nFacebook post:\n${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. Book this week to claim it before appointments fill up.\n\nSMS:\n${business}: ${cleanPrompt}. Reply YES to book or message us today.\n\nEmail subject:\nA quick offer from ${business}\n\nGoogle Business update:\nLooking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer. Message us today to schedule.`;
@@ -188,6 +203,7 @@ function App() {
   const [businessType, setBusinessType] = useState("service business");
   const [city, setCity] = useState("Austin");
   const [tone, setTone] = useState("Friendly");
+  const [reviewSituation, setReviewSituation] = useState("Positive review");
   const [prompt, setPrompt] = useState("20% off spring AC tune-ups this week for homeowners in Austin.");
   const [generationCount, setGenerationCount] = useState(getSavedUsage);
   const [generatedOutput, setGeneratedOutput] = useState("");
@@ -212,7 +228,9 @@ function App() {
     }
 
     const nextCount = generationCount + 1;
-    const nextOutput = buildGeneration({ activeTool, businessName, businessType, city, tone, prompt });
+    const promptWithContext =
+      activeTool === "review" ? `${reviewSituation}: ${prompt}` : prompt;
+    const nextOutput = buildGeneration({ activeTool, businessName, businessType, city, tone, prompt: promptWithContext });
     window.localStorage.setItem(usageStorageKey, String(nextCount));
     setGenerationCount(nextCount);
     setGeneratedOutput(nextOutput);
@@ -363,6 +381,20 @@ function App() {
 
                 <label className="prompt-label">
                   <span>{activeToolData.title}</span>
+                  {activeTool === "review" && (
+                    <div className="segment-control" aria-label="Review situation">
+                      {reviewSituations.map((situation) => (
+                        <button
+                          key={situation}
+                          className={reviewSituation === situation ? "active" : ""}
+                          onClick={() => setReviewSituation(situation)}
+                          type="button"
+                        >
+                          {situation}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <textarea
                     value={prompt}
                     onChange={(event) => setPrompt(event.target.value)}
