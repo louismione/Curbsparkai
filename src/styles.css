@@ -383,6 +383,45 @@ textarea {
   resize: vertical;
 }
 
+.generator-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.usage-meter {
+  border: 1px solid rgba(20, 20, 20, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #504a42;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  font-weight: 850;
+}
+
+.usage-meter strong {
+  color: #141414;
+  font-size: 1.05rem;
+}
+
+.generate-button {
+  flex: 0 0 auto;
+}
+
+.limit-notice {
+  margin-top: 12px;
+  border: 1px solid rgba(255, 104, 72, 0.34);
+  border-radius: 8px;
+  background: rgba(255, 104, 72, 0.11);
+  color: #68301e;
+  padding: 12px 13px;
+  line-height: 1.5;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
 .output-panel {
   margin-top: 14px;
   overflow: hidden;
@@ -412,6 +451,11 @@ textarea {
   padding: 8px 11px;
   font-size: 0.84rem;
   font-weight: 850;
+}
+
+.copy-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
 }
 
 pre {
@@ -829,10 +873,16 @@ pre {
   .form-grid,
   .tool-tabs,
   .mini-metrics,
+  .generator-actions,
   .tool-grid,
   .pricing-grid,
   .reason-grid {
     grid-template-columns: 1fr;
+  }
+
+  .generator-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .tool-tab {

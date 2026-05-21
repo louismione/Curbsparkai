@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { motion } from "framer-motion";
 import {
@@ -101,6 +101,8 @@ const faqs = [
 
 const toneOptions = ["Friendly", "Professional", "Warm", "Confident"];
 const industries = ["HVAC", "Dental", "Salon", "Med spa", "Roofing", "Restaurant", "Auto repair", "Fitness"];
+const FREE_GENERATION_LIMIT = 5;
+const usageStorageKey = `curbspark-free-generations-${new Date().toISOString().slice(0, 7)}`;
 const presetLabels = [
   "5-star reply",
   "Missed call text",
@@ -124,6 +126,14 @@ function Button({ children, variant = "primary", className = "", ...props }) {
 
 function Card({ children, className = "" }) {
   return <div className={`card ${className}`}>{children}</div>;
+}
+
+function getSavedUsage() {
+  if (typeof window === "undefined") {
+    return 0;
+  }
+
+  return Number(window.localStorage.getItem(usageStorageKey) || 0);
 }
 
 function buildGeneration({ activeTool, businessName, businessType, city, tone, prompt }) {
@@ -151,21 +161,51 @@ function App() {
   const [city, setCity] = useState("Austin");
   const [tone, setTone] = useState("Friendly");
   const [prompt, setPrompt] = useState("20% off spring AC tune-ups this week for homeowners in Austin.");
+  const [generationCount, setGenerationCount] = useState(getSavedUsage);
+  const [generatedOutput, setGeneratedOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
   const activeToolData = tools.find((tool) => tool.id === activeTool);
-  const output = useMemo(
-    () => buildGeneration({ activeTool, businessName, businessType, city, tone, prompt }),
-    [activeTool, businessName, businessType, city, tone, prompt],
-  );
+  const remainingGenerations = Math.max(FREE_GENERATION_LIMIT - generationCount, 0);
+  const hasReachedFreeLimit = remainingGenerations === 0;
+
+  function scrollToGenerator() {
+    document.querySelector("#generator")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function scrollToPricing() {
+    document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function generateCopy() {
+    if (hasReachedFreeLimit) {
+      scrollToPricing();
+      return;
+    }
+
+    const nextCount = generationCount + 1;
+    const nextOutput = buildGeneration({ activeTool, businessName, businessType, city, tone, prompt });
+    window.localStorage.setItem(usageStorageKey, String(nextCount));
+    setGenerationCount(nextCount);
+    setGeneratedOutput(nextOutput);
+  }
 
   async function copyOutput() {
-    await navigator.clipboard.writeText(output);
+    if (!generatedOutput) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(generatedOutput);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
   }
 
   function startPlan(plan = "Free") {
+    if (plan === "Free") {
+      scrollToGenerator();
+      return;
+    }
+
     if (paymentLinks[plan]) {
       window.location.href = paymentLinks[plan];
       return;
@@ -230,7 +270,7 @@ function App() {
                 <Button onClick={() => document.querySelector("#generator").scrollIntoView({ behavior: "smooth" })}>
                   Create free marketing copy <ArrowRight size={18} />
                 </Button>
-                <Button variant="secondary" onClick={() => document.querySelector("#pricing").scrollIntoView({ behavior: "smooth" })}>
+                <Button variant="secondary" onClick={scrollToPricing}>
                   View pricing
                 </Button>
               </div>
@@ -302,14 +342,30 @@ function App() {
                   />
                 </label>
 
+                <div className="generator-actions">
+                  <div className="usage-meter">
+                    <strong>{remainingGenerations}</strong> free generations left this month
+                  </div>
+                  <Button onClick={generateCopy} className="generate-button">
+                    {hasReachedFreeLimit ? "Upgrade to keep going" : "Generate copy"}
+                    <ArrowRight size={17} />
+                  </Button>
+                </div>
+
+                {hasReachedFreeLimit && (
+                  <div className="limit-notice">
+                    You used your 5 free generations for this month. Choose a paid plan to keep creating copy.
+                  </div>
+                )}
+
                 <div className="output-panel" aria-live="polite">
                   <div className="output-head">
                     <span><Wand2 size={17} /> Generated copy</span>
-                    <button className="copy-button" onClick={copyOutput} type="button">
+                    <button className="copy-button" onClick={copyOutput} type="button" disabled={!generatedOutput}>
                       <Copy size={16} /> {copied ? "Copied" : "Copy"}
                     </button>
                   </div>
-                  <pre>{output}</pre>
+                  <pre>{generatedOutput || "Your generated copy will appear here after you click Generate copy."}</pre>
                 </div>
               </Card>
             </motion.div>
@@ -427,7 +483,7 @@ function App() {
             </div>
             <div className="cta-buttons">
               <Button variant="light" onClick={() => startPlan("Free")}>Create free copy</Button>
-              <Button variant="ghost" onClick={() => document.querySelector("#pricing").scrollIntoView({ behavior: "smooth" })}>View pricing</Button>
+              <Button variant="ghost" onClick={scrollToPricing}>View pricing</Button>
             </div>
           </div>
         </section>
