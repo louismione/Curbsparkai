@@ -383,6 +383,61 @@ select:focus {
   margin-top: 12px;
 }
 
+.brand-memory {
+  margin-top: 14px;
+  border: 1px solid rgba(20, 20, 20, 0.12);
+  border-radius: 8px;
+  background: rgba(240, 237, 230, 0.72);
+  padding: 14px;
+}
+
+.brand-memory-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.brand-memory-head > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.brand-memory-head strong {
+  font-size: 0.96rem;
+}
+
+.brand-memory-head span {
+  color: #625d54;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.brand-memory-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: flex-end;
+}
+
+.brand-memory-actions button {
+  min-height: 34px;
+  border: 1px solid rgba(20, 20, 20, 0.14);
+  border-radius: 8px;
+  background: white;
+  color: #141414;
+  cursor: pointer;
+  padding: 0 11px;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.brand-memory-actions button:first-child {
+  background: #141414;
+  color: white;
+}
+
 .segment-control {
   display: flex;
   flex-wrap: wrap;
@@ -1031,6 +1086,20 @@ pre {
   .generator-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .brand-memory-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .brand-memory-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .brand-memory-actions button {
+    flex: 1;
   }
 
   .tool-tab {

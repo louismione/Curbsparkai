@@ -111,6 +111,7 @@ const toneOptions = ["Friendly", "Professional", "Warm", "Confident"];
 const industries = ["HVAC", "Dental", "Salon", "Med spa", "Roofing", "Restaurant", "Auto repair", "Fitness"];
 const FREE_GENERATION_LIMIT = 5;
 const usageStorageKey = `curbspark-free-generations-${new Date().toISOString().slice(0, 7)}`;
+const profileStorageKey = "curbspark-brand-profile";
 const reviewSituations = ["Positive review", "Negative review", "Neutral review", "Angry customer", "Late service complaint"];
 const presetLabels = [
   "5-star reply",
@@ -175,25 +176,41 @@ function getSavedUsage() {
   return Number(window.localStorage.getItem(usageStorageKey) || 0);
 }
 
-function buildGeneration({ activeTool, businessName, businessType, city, tone, prompt }) {
+function getSavedProfile() {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    return JSON.parse(window.localStorage.getItem(profileStorageKey) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function buildGeneration({ activeTool, businessName, businessType, city, tone, mainServices, avoidWords, prompt }) {
   const cleanPrompt = prompt.trim() || "20% off spring AC tune-ups this week";
   const business = businessName.trim() || "your business";
   const category = businessType.trim() || "local business";
   const market = city.trim() || "your area";
+  const services = mainServices.trim();
+  const avoid = avoidWords.trim();
+  const serviceLine = services ? `\nPrimary services to emphasize: ${services}` : "";
+  const avoidLine = avoid ? `\nAvoid this wording or tone: ${avoid}` : "";
 
   if (activeTool === "review") {
-    return `Public reply:\nHi, thank you for sharing this feedback with ${business}. We appreciate the chance to serve customers in ${market}, and we are glad you took the time to let us know about your experience. We will share this with our team and use it to keep improving.\n\nPrivate follow-up:\nThanks again for the feedback. If there is anything else we can do to make this right, please message us and our team will take care of it.\n\nInternal note:\nUse this as a calm, ${tone.toLowerCase()} response that acknowledges the customer without sounding defensive.`;
+    return `Public reply:\nHi, thank you for sharing this feedback with ${business}. We appreciate the chance to serve customers in ${market}, and we are glad you took the time to let us know about your experience. We will share this with our team and use it to keep improving.\n\nPrivate follow-up:\nThanks again for the feedback. If there is anything else we can do to make this right, please message us and our team will take care of it.\n\nBrand notes:\nUse this as a calm, ${tone.toLowerCase()} response that acknowledges the customer without sounding defensive.${serviceLine}${avoidLine}`;
   }
 
   if (activeTool === "caption") {
-    return `Caption:\nAnother finished project from ${business}. We love helping ${market} customers get results they can feel good about.\n\n${cleanPrompt}\n\nCTA:\nReady for help from a ${tone.toLowerCase()} ${category}? Send us a message today.\n\nHashtags:\n#LocalBusiness #${market.replace(/\s+/g, "")} #SmallBusiness #CustomerCare`;
+    return `Caption:\nAnother finished project from ${business}. We love helping ${market} customers get results they can feel good about.\n\n${cleanPrompt}\n\nCTA:\nReady for help from a ${tone.toLowerCase()} ${category}? Send us a message today.\n\nBrand notes:${serviceLine || "\nUse the main services customers ask about most."}${avoidLine}\n\nHashtags:\n#LocalBusiness #${market.replace(/\s+/g, "")} #SmallBusiness #CustomerCare`;
   }
 
   if (activeTool === "ideas") {
-    return `30-day marketing calendar for ${business}\nGoal or theme:\n${cleanPrompt}\n\nRecommended cadence:\n- 2 Facebook or Instagram posts per week\n- 1 Google Business update per week\n- 1 review/reputation prompt per week\n- 1 offer reminder near the middle and end of the month\n\nWeek 1: Build trust\nDay 1 - Google Business: Introduce the main service or offer for the month.\nDay 3 - Social post: Share a common customer question about your ${category}.\nDay 5 - Review prompt: Ask recent customers what stood out about their experience.\nDay 7 - Local trust post: Mention the ${market} neighborhoods or customer types you help most.\n\nWeek 2: Educate and show proof\nDay 9 - Tip post: Share one seasonal or timely tip customers should know.\nDay 11 - Before/after or project post: Show a result, finished job, happy customer, or team moment.\nDay 13 - Google Business: Explain what makes your process simple or reliable.\nDay 14 - Soft offer: Remind customers about this month's offer or best service.\n\nWeek 3: Drive action\nDay 16 - Promo post: Turn the monthly theme into a clear limited-time offer.\nDay 18 - SMS or email: Send a short reminder to book, visit, or message the business.\nDay 20 - Review spotlight: Thank a recent customer and highlight one positive detail.\nDay 21 - FAQ post: Answer the question customers ask before buying.\n\nWeek 4: Finish strong\nDay 23 - Social post: Share a behind-the-scenes or team photo.\nDay 25 - Google Business: Post a last-call reminder for the monthly offer.\nDay 27 - Reputation prompt: Ask customers to mention what problem you helped solve.\nDay 30 - Recap post: Thank ${market} customers and preview what is coming next month.\n\n5 ready-to-use post hooks:\n- ${market} customers ask us this all the time...\n- Before you book a ${category}, here is one thing to know.\n- A quick reminder from ${business}: ${cleanPrompt}\n- We helped another local customer with this exact problem.\n- If this has been on your to-do list, this is your sign to handle it this week.\n\nBest channels this month:\n- Google Business for local search visibility\n- Facebook for community awareness\n- SMS or email for offer reminders\n- Instagram for photos, before/after work, and team trust`;
+    return `30-day marketing calendar for ${business}\nGoal or theme:\n${cleanPrompt}${serviceLine}${avoidLine}\n\nRecommended cadence:\n- 2 Facebook or Instagram posts per week\n- 1 Google Business update per week\n- 1 review/reputation prompt per week\n- 1 offer reminder near the middle and end of the month\n\nWeek 1: Build trust\nDay 1 - Google Business: Introduce the main service or offer for the month.\nDay 3 - Social post: Share a common customer question about your ${category}.\nDay 5 - Review prompt: Ask recent customers what stood out about their experience.\nDay 7 - Local trust post: Mention the ${market} neighborhoods or customer types you help most.\n\nWeek 2: Educate and show proof\nDay 9 - Tip post: Share one seasonal or timely tip customers should know.\nDay 11 - Before/after or project post: Show a result, finished job, happy customer, or team moment.\nDay 13 - Google Business: Explain what makes your process simple or reliable.\nDay 14 - Soft offer: Remind customers about this month's offer or best service.\n\nWeek 3: Drive action\nDay 16 - Promo post: Turn the monthly theme into a clear limited-time offer.\nDay 18 - SMS or email: Send a short reminder to book, visit, or message the business.\nDay 20 - Review spotlight: Thank a recent customer and highlight one positive detail.\nDay 21 - FAQ post: Answer the question customers ask before buying.\n\nWeek 4: Finish strong\nDay 23 - Social post: Share a behind-the-scenes or team photo.\nDay 25 - Google Business: Post a last-call reminder for the monthly offer.\nDay 27 - Reputation prompt: Ask customers to mention what problem you helped solve.\nDay 30 - Recap post: Thank ${market} customers and preview what is coming next month.\n\n5 ready-to-use post hooks:\n- ${market} customers ask us this all the time...\n- Before you book a ${category}, here is one thing to know.\n- A quick reminder from ${business}: ${cleanPrompt}\n- We helped another local customer with this exact problem.\n- If this has been on your to-do list, this is your sign to handle it this week.\n\nBest channels this month:\n- Google Business for local search visibility\n- Facebook for community awareness\n- SMS or email for offer reminders\n- Instagram for photos, before/after work, and team trust`;
   }
 
-  return `Flyer headline:\n${cleanPrompt}\n\nFacebook post:\n${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. Book this week to claim it before appointments fill up.\n\nSMS:\n${business}: ${cleanPrompt}. Reply YES to book or message us today.\n\nEmail subject:\nA quick offer from ${business}\n\nGoogle Business update:\nLooking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer. Message us today to schedule.`;
+  return `Flyer headline:\n${cleanPrompt}\n\nFacebook post:\n${business} is helping ${market} customers save time and feel confident with a simple limited-time offer. Book this week to claim it before appointments fill up.\n\nSMS:\n${business}: ${cleanPrompt}. Reply YES to book or message us today.\n\nEmail subject:\nA quick offer from ${business}\n\nGoogle Business update:\nLooking for a ${tone.toLowerCase()} ${category} in ${market}? ${business} is running a limited-time offer. Message us today to schedule.\n\nBrand notes:${serviceLine || "\nEmphasize the services customers ask about most."}${avoidLine}`;
 }
 
 function getDefaultPrompt(toolId) {
@@ -205,12 +222,16 @@ function getDefaultPrompt(toolId) {
 }
 
 function App() {
+  const savedProfile = getSavedProfile();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTool, setActiveTool] = useState("promo");
-  const [businessName, setBusinessName] = useState("CurbSpark AI");
-  const [businessType, setBusinessType] = useState("service business");
-  const [city, setCity] = useState("Austin");
-  const [tone, setTone] = useState("Friendly");
+  const [businessName, setBusinessName] = useState(savedProfile.businessName || "CurbSpark AI");
+  const [businessType, setBusinessType] = useState(savedProfile.businessType || "service business");
+  const [city, setCity] = useState(savedProfile.city || "Austin");
+  const [tone, setTone] = useState(savedProfile.tone || "Friendly");
+  const [mainServices, setMainServices] = useState(savedProfile.mainServices || "");
+  const [avoidWords, setAvoidWords] = useState(savedProfile.avoidWords || "");
+  const [profileSaved, setProfileSaved] = useState(Boolean(savedProfile.businessName || savedProfile.mainServices || savedProfile.avoidWords));
   const [reviewSituation, setReviewSituation] = useState("Positive review");
   const [prompt, setPrompt] = useState(getDefaultPrompt("promo"));
   const [generationCount, setGenerationCount] = useState(getSavedUsage);
@@ -238,10 +259,28 @@ function App() {
     const nextCount = generationCount + 1;
     const promptWithContext =
       activeTool === "review" ? `${reviewSituation}: ${prompt}` : prompt;
-    const nextOutput = buildGeneration({ activeTool, businessName, businessType, city, tone, prompt: promptWithContext });
+    const nextOutput = buildGeneration({ activeTool, businessName, businessType, city, tone, mainServices, avoidWords, prompt: promptWithContext });
     window.localStorage.setItem(usageStorageKey, String(nextCount));
     setGenerationCount(nextCount);
     setGeneratedOutput(nextOutput);
+  }
+
+  function saveProfile() {
+    const profile = { businessName, businessType, city, tone, mainServices, avoidWords };
+    window.localStorage.setItem(profileStorageKey, JSON.stringify(profile));
+    setProfileSaved(true);
+  }
+
+  function clearProfile() {
+    window.localStorage.removeItem(profileStorageKey);
+    setBusinessName("CurbSpark AI");
+    setBusinessType("service business");
+    setCity("Austin");
+    setTone("Friendly");
+    setMainServices("");
+    setAvoidWords("");
+    setProfileSaved(false);
+    setGeneratedOutput("");
   }
 
   function selectTool(toolId) {
@@ -392,6 +431,37 @@ function App() {
                       ))}
                     </select>
                   </label>
+                </div>
+
+                <div className="brand-memory">
+                  <div className="brand-memory-head">
+                    <div>
+                      <strong>Brand memory</strong>
+                      <span>{profileSaved ? "Saved on this device" : "Save once and reuse next visit"}</span>
+                    </div>
+                    <div className="brand-memory-actions">
+                      <button onClick={saveProfile} type="button">Save profile</button>
+                      <button onClick={clearProfile} type="button">Clear</button>
+                    </div>
+                  </div>
+                  <div className="form-grid">
+                    <label>
+                      <span>Main services</span>
+                      <input
+                        value={mainServices}
+                        onChange={(event) => setMainServices(event.target.value)}
+                        placeholder="AC tune-ups, repairs, installs..."
+                      />
+                    </label>
+                    <label>
+                      <span>Words or tone to avoid</span>
+                      <input
+                        value={avoidWords}
+                        onChange={(event) => setAvoidWords(event.target.value)}
+                        placeholder="Avoid pushy, cheap, emojis..."
+                      />
+                    </label>
+                  </div>
                 </div>
 
                 <label className="prompt-label">
